@@ -12,7 +12,7 @@ class Configuration:
                 current_time_stamp= CURRENT_TIME_STAMP
                 ) -> None:
         self.config_info = read_yaml_file(config_file_path)
-        self.training_pipeline_config = self.get_model_training_config()
+        self.training_pipeline_config = self.get_training_pipeline_config()
         self.time_stamp = current_time_stamp
 
     def get_data_ingestion_config(self) -> DataIngestionConfig :
@@ -25,7 +25,7 @@ class Configuration:
             )
             data_ingestion_info = self.config_info[DATA_INGESTION_CONFIG_KEY]
 
-            data_download_url = data_ingestion_info[DATA_INGESTION_DOWNLOAD_URL_KEY]
+            dataset_download_url = data_ingestion_info[DATA_INGESTION_DOWNLOAD_URL_KEY]
             tgz_download_dir = os.path.join(
                 data_ingestion_artifact_dir,
                 DATA_INGESTION_TGZ_DOWNLOAD_DIR_KEY
@@ -58,27 +58,27 @@ class Configuration:
         except Exception as e:
             raise PremiumException(e, sys) from e
 
-    def get_data_validation_config(self) -> DataValidationConfig :
+    def get_data_validation_config(self) :
         pass
 
-    def get_data_transformation_config(self) -> DataTransformationConfig:
+    def get_data_transformation_config(self) :
         pass
 
-    def get_model_training_config(self) -> ModelTrainingConfig:
+    def get_model_training_config(self) :
         pass
 
-    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+    def get_model_evaluation_config(self) :
         pass
 
-    def get_model_pusher_config(self) -> ModelPusherConfig:
+    def get_model_pusher_config(self) :
         pass
 
     def get_training_pipeline_config(self) -> TrainingPipelineConfig:
         try:
             training_pipeline_config = self.config_info[TRAINING_PIPELINE_CONFIG_KEY]
             artifact_dir = os.path.join(ROOT_DIR,
-                                        training_pipeline_config[TRAINING_PIPELINEE_NAME_KEY],
-                                        training_pipeline_config[TRAINING_PIPELINEE_ARTIFACT_DIR_KEY]
+                                        training_pipeline_config[TRAINING_PIPELINE_NAME_KEY],
+                                        training_pipeline_config[TRAINING_PIPELINE_ARTIFACT_DIR_KEY]
                                         ) 
             training_pipeline_config = TrainingPipelineConfig(
                 artifact_dir=artifact_dir)

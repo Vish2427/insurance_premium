@@ -5,7 +5,9 @@ class PremiumException(Exception):
     def __init__(self, error_message: Exception, error_details :sys):
         super().__init__(error_message)
 
-        self.error_message = PremiumException
+        self.error_message = PremiumException.get_detaild_error_message(error_message=error_message, 
+                                                                        error_details=error_details
+                                                                        )  
 
     @staticmethod
     def get_detaild_error_message(error_message : Exception, error_details: sys):
