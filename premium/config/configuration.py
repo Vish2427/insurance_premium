@@ -62,7 +62,7 @@ class Configuration:
         try:
             artifact_dir = self.training_pipeline_config.artifact_dir
             data_validation_artifact_dir = os.path.join(
-                ROOT_DIR,
+                artifact_dir,
                 DATA_VALIDATION_ARTIFACT_DIR_NAME,
                 self.time_stamp
                 )

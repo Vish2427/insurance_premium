@@ -4,4 +4,5 @@ pandas
 gunicorn
 sklearn
 PyYAML
+evidently
 -e .

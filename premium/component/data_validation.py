@@ -1,0 +1,187 @@
+from premium.logger import logging
+from premium.exception import PremiumException
+from premium.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact
+from premium.entity.config_entity import DataValidationConfig
+from premium.util.util import read_yaml_file
+from premium.Constant import *
+from evidently.model_profile.sections import DataDriftProfileSection
+from evidently.model_profile import Profile
+from evidently.dashboard import Dashboard
+from evidently.dashboard.tabs import DataDriftTab
+import os,sys
+import pandas as pd
+import json
+
+class DataValidation:
+
+    def __init__(self, data_validation_config : DataValidationConfig,
+    data_ingestion_artifact : DataIngestionArtifact):
+        try:
+            logging.info(f"{'>>'*30}Data Valdaition log started.{'<<'*20} \n")
+            self.data_validation_config = data_validation_config
+            self.data_ingestion_artifact = data_ingestion_artifact
+        except Exception as e:
+            raise PremiumException(e,sys) from e
+
+    def is_train_test_file_exists(self) -> bool:
+        try:
+            logging.info("Checking if training and test file is available")
+            train_file = None
+            test_file = None
+
+            train_file_path = self.data_ingestion_artifact.train_file_path
+            test_file_path = self.data_ingestion_artifact.test_file_path
+
+            train_file = os.path.exists(train_file_path)
+            test_file = os.path.exists(test_file_path)
+
+            is_available = train_file and test_file
+
+            logging.info(f"Is train and test file exists?-> {is_available}")
+            
+            if not is_available:
+                training_file = self.data_ingestion_artifact.train_file_path
+                testing_file = self.data_ingestion_artifact.test_file_path
+                message=f"Training file: {training_file} or Testing file: {testing_file}" \
+                    "is not present"
+                raise Exception(message)
+
+            return is_available
+        except Exception as e:
+            raise PremiumException(e, sys) from e
+
+    def validate_dataset_schema(self) -> bool:
+        try:
+            validation_status = False
+
+            train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
+            test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
+
+            dict = read_yaml_file(file_path= os.path.join(ROOT_DIR,CONFIG_DIR,'schema.yaml'))['columns']
+
+            schema_file_columns=[]
+            for keys in dict.keys():
+                schema_file_columns.append(keys)
+            column_name_validation = False
+            if sorted(train_df.columns.to_list()) == sorted(test_df.columns.to_list()) == sorted(schema_file_columns):
+                 column_name_validation = True
+            sex_yaml_col_value = sorted(read_yaml_file(file_path =os.path.join(ROOT_DIR,CONFIG_DIR,'schema.yaml'))['domain_value']['sex'])
+            region_yaml_col_value = sorted(read_yaml_file(file_path = os.path.join(ROOT_DIR,CONFIG_DIR,'schema.yaml'))['domain_value']['region'])
+            smoker_yaml_col_value = sorted(read_yaml_file(file_path = os.path.join(ROOT_DIR,CONFIG_DIR,'schema.yaml'))['domain_value']['smoker'])
+
+            #checking values of "sex", "region","smoker" in train and test file
+            sex_val_train_df = sorted(train_df["sex"].unique())
+            sex_val_test_df = sorted(test_df["sex"].unique())
+
+            region_val_train_df = sorted(train_df["region"].unique())
+            region_val_test_df = sorted(test_df["region"].unique())
+
+            smoker_val_train_df = sorted(train_df["smoker"].unique())
+            smoker_val_test_df = sorted(test_df["smoker"].unique())
+
+            # checking whethere "sex", "region","smoker" column having same values or not
+            sex_region_smoker = False
+            if sex_val_train_df == sex_val_test_df == sex_yaml_col_value:
+                 if region_val_train_df == region_val_test_df == region_yaml_col_value:
+                    if  smoker_val_train_df==smoker_val_test_df ==smoker_yaml_col_value:
+                        sex_region_smoker = True
+            numerical_yaml_col =  sorted(read_yaml_file(file_path =os.path.join(ROOT_DIR,CONFIG_DIR,'schema.yaml'))['numerical_columns'])           
+            # checking numerical columns
+            train_numerical = sorted([feature for feature in train_df.columns if train_df[feature].dtypes != 'O'])
+            test_numerical = sorted([feature for feature in test_df.columns if test_df[feature].dtypes != 'O'])
+            numerical_col_val = False
+            if train_numerical==test_numerical==numerical_yaml_col:
+                numerical_col_val = True
+            validation_status = column_name_validation and sex_region_smoker and numerical_col_val
+            if validation_status== True:
+                logging.info(f"schema validation successful")
+            else:
+                logging.info(f"""schema validation got failed due to
+                    column_name_validation : {column_name_validation}
+                    sex_region_smoker_validation : {sex_region_smoker}
+                    numerical_column_validation : {numerical_col_val}
+                    """)
+            return validation_status
+                
+        except Exception as e:
+            raise PremiumException(e, sys) from e
+
+    def get_train_and_test_df(self):
+        try:
+            train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
+            test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
+
+            logging.info(f"Got train and test dataframe")
+            return train_df, test_df
+
+        except Exception as e:
+            raise PremiumException(e,sys) from e
+
+    def get_and_save_data_drift_report(self):
+        try:
+            profile = Profile(sections=[DataDriftProfileSection()])
+
+            train_df,test_df = self.get_train_and_test_df()
+
+            profile.calculate(train_df,test_df)
+
+            report = json.loads(profile.json())
+
+            report_file_path = self.data_validation_config.report_file_path
+            report_dir = os.path.dirname(report_file_path)
+            os.makedirs(report_dir,exist_ok=True)
+
+            with open(report_file_path, "w") as report_file:
+                json.dump(report, report_file, indent=6)
+
+            logging.info(f"Data_drift report json file : {report_dir}")
+            return report
+
+        except Exception as e:
+            raise PremiumException(e,sys) from e
+
+
+    def save_data_drift_report_page(self):
+        try:
+            dashboard = Dashboard(tabs=[DataDriftTab()])
+            train_df,test_df = self.get_train_and_test_df()
+            dashboard.calculate(train_df,test_df)
+
+            report_page_file_path = self.data_validation_config.report_page_file_path
+            report_page_dir = os.path.dirname(report_page_file_path)
+            os.makedirs(report_page_dir, exist_ok = True)
+            dashboard.save(report_page_file_path)
+            logging.info(f"Exporting data_drift_report_page : {report_page_file_path}")
+        except Exception as e:
+            raise PremiumException(e,sys) from e
+
+
+    def is_data_drift_found(self)->bool:
+        try:
+            report = self.get_and_save_data_drift_report()
+            self.save_data_drift_report_page()
+            return True
+
+        except Exception as e:
+            raise PremiumException(e,sys) from e
+
+    def inititate_data_validation(self) -> DataValidationArtifact:
+        try:
+            self.is_train_test_file_exists()
+            self.validate_dataset_schema()
+            self.is_data_drift_found()
+
+            data_validation_artifact = DataValidationArtifact(
+                schema_file_path = self.data_validation_config.schema_file_path,
+                report_file_path = self.data_validation_config.report_file_path,
+                report_page_file_path = self.data_validation_config.report_page_file_path,
+                is_validated = True,
+                message = f"Data Validation performed successully.")
+
+            logging.info(f"Data validation artifact: {data_validation_artifact}")
+            return data_validation_artifact
+        except Exception as e:
+            raise PremiumException(e, sys) from e
+
+    def __del__(self):
+        logging.info(f"{'>>'*20}Data Validation log completed.{'<<'*20} \n")

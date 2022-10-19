@@ -12,6 +12,7 @@ numerical_columns:
   - age
   - bmi
   - children
+  - expenses
 
 categorical_columns:
   - sex
@@ -27,8 +28,8 @@ domain_value:
     - female
     - male
   smoker:
-    - yes
-    - no
+    - 'yes'
+    - 'no'
   region:
     - southwest
     - southeast

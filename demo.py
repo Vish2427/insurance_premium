@@ -6,10 +6,10 @@ import sys
 
 def main():
     try:
-        #pipeline = Pipeline()
-        #pipeline.run_pipeline()
-        configuration = Configuration().get_data_validation_config()
-        print(configuration)
+        pipeline = Pipeline()
+        pipeline.run_pipeline()
+        #configuration = Configuration().get_data_validation_config()
+        #print(configuration)
     except Exception as e:
         logging.error(f"{e}")
         print(e)
