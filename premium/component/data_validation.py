@@ -87,8 +87,8 @@ class DataValidation:
                         sex_region_smoker = True
             numerical_yaml_col =  sorted(read_yaml_file(file_path =os.path.join(ROOT_DIR,CONFIG_DIR,'schema.yaml'))['numerical_columns'])           
             # checking numerical columns
-            train_numerical = sorted([feature for feature in train_df.columns if train_df[feature].dtypes != 'O'])
-            test_numerical = sorted([feature for feature in test_df.columns if test_df[feature].dtypes != 'O'])
+            train_numerical = sorted([feature for feature in train_df.columns if train_df[feature].dtypes != 'O' and feature !='expenses'])
+            test_numerical = sorted([feature for feature in test_df.columns if test_df[feature].dtypes != 'O'and feature !='expenses'])
             numerical_col_val = False
             if train_numerical==test_numerical==numerical_yaml_col:
                 numerical_col_val = True

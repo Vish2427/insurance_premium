@@ -12,7 +12,6 @@ numerical_columns:
   - age
   - bmi
   - children
-  - expenses
 
 categorical_columns:
   - sex
