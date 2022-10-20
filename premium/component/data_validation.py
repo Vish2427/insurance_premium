@@ -20,6 +20,7 @@ class DataValidation:
             logging.info(f"{'>>'*30}Data Valdaition log started.{'<<'*20} \n")
             self.data_validation_config = data_validation_config
             self.data_ingestion_artifact = data_ingestion_artifact
+            
         except Exception as e:
             raise PremiumException(e,sys) from e
 

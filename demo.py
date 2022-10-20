@@ -8,7 +8,7 @@ def main():
     try:
         pipeline = Pipeline()
         pipeline.run_pipeline()
-        #configuration = Configuration().get_data_validation_config()
+        #configuration = Configuration().get_data_transformation_config()
         #print(configuration)
     except Exception as e:
         logging.error(f"{e}")
