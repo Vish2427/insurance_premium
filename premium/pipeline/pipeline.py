@@ -5,6 +5,7 @@ from premium.entity.artifact_entity import *
 from premium.component.data_ingestion import DataIngestion
 from premium.component.data_validation import DataValidation
 from premium.component.data_transformation import DataTransformation
+from premium.component.model_trainer import ModelTrainer
 from premium.config.configuration import Configuration
 import os,sys
 
@@ -42,6 +43,15 @@ class Pipeline:
             return data_transformation.initiate_data_transformation()
         except Exception as e:
             raise PremiumException(e, sys) from e
+    
+    def start_model_training(self, data_transformation_artifac: DataTransformationArtifact):
+        try:
+            model_training = ModelTrainer(model_trainer_config=self.config.get_model_training_config(), 
+                data_transformation_artifact=data_transformation_artifac
+            )
+            return model_training.initiate_model_trainer()
+        except Exception as e:
+            raise PremiumException(e, sys) from e
 
     def run_pipeline(self):
         try:
@@ -50,5 +60,6 @@ class Pipeline:
             data_transformation_artifac= self.start_data_transformation(data_ingestion_artifact=data_ingestion_artifact,
                              data_validation_artifact=data_validation_artifact
                              )
+            model_trainer_artifact = self.start_model_training(data_transformation_artifac=data_transformation_artifac)           
         except Exception as e:
             raise PremiumException(e, sys) from e

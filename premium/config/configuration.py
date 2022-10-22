@@ -101,18 +101,18 @@ class Configuration:
             )
             preprocessed_object_file_path = os.path.join(
                 data_transformation_dir,
-                DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY,
-                DATA_TRANSFORMATION_PREPROCESSED_FILE_NAME_KEY
+                data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY],
+                data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSED_FILE_NAME_KEY]
             )
             transformed_train_dir= os.path.join(
                 data_transformation_dir,
-                DATA_TRANSFORMATION_DIR_NAME_KEY,
-                DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY
+                data_transformation_config_info[DATA_TRANSFORMATION_DIR_NAME_KEY],
+                data_transformation_config_info[DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY]
             )
             transformed_test_dir = os.path.join(
                 data_transformation_dir,
-                DATA_TRANSFORMATION_DIR_NAME_KEY,
-                DATA_TRANSFORMATION_TEST_DIR_NAME_KEY
+                data_transformation_config_info[DATA_TRANSFORMATION_DIR_NAME_KEY],
+                data_transformation_config_info[DATA_TRANSFORMATION_TEST_DIR_NAME_KEY]
             )
             data_transformation_config = DataTransformationConfig(
                 transformed_train_dir=transformed_train_dir,
@@ -133,13 +133,14 @@ class Configuration:
                 self.time_stamp
             )
             trained_model_file_path=os.path.join(model_training_dir,
-                MODEL_TRAINER_TRAINED_MODEL_DIR_KEY,
-                MODEL_TRAINER_TRAINED_MODEL_FILE_NAME_KEY
+                model_training_config_info[MODEL_TRAINER_TRAINED_MODEL_DIR_KEY],
+                model_training_config_info[MODEL_TRAINER_TRAINED_MODEL_FILE_NAME_KEY]
             )
             base_accuracy=model_training_config_info[MODEL_TRAINER_BASE_ACCURACY_KEY]
             model_config_file_path=os.path.join(
-                MODEL_TRAINER_MODEL_CONFIG_DIR_KEY,
-                MODEL_TRAINER_MODEL_CONFIG_FILE_NAME_KEY
+                ROOT_DIR,
+                model_training_config_info[MODEL_TRAINER_MODEL_CONFIG_DIR_KEY],
+                model_training_config_info[MODEL_TRAINER_MODEL_CONFIG_FILE_NAME_KEY]
             )
             model_training_config = ModelTrainerConfig(trained_model_file_path=trained_model_file_path,
                 base_accuracy=base_accuracy,
