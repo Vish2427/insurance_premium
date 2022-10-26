@@ -152,7 +152,24 @@ class Configuration:
             raise PremiumException(e, sys) from e
 
     def get_model_evaluation_config(self) :
-        pass
+        try:
+            artifact_dir = self.training_pipeline_config.artifact_dir
+            evaluation_config_info = self.config_info[MODEL_EVALUATION_CONFIG_KEY]
+            model_evaluation_dir = os.path.join(
+                artifact_dir,
+                MODEL_EVALUATION_ARTIFACT_DIR
+            )
+            model_evaluation_file_path = os.path.join(
+                model_evaluation_dir,
+                evaluation_config_info[MODEL_EVALUATION_FILE_NAME_KEY]
+            )
+            model_evaluation_config = ModelEvaluationConfig(
+                model_evaluation_file_path=model_evaluation_file_path,
+                time_stamp=self.time_stamp)
+            logging.info(f"Model Training config: {model_evaluation_config}")
+            return model_evaluation_config
+        except Exception as e:
+            raise PremiumException(e, sys) from e
 
     def get_model_pusher_config(self) :
         pass
