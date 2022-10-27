@@ -6,6 +6,8 @@ from premium.component.data_ingestion import DataIngestion
 from premium.component.data_validation import DataValidation
 from premium.component.data_transformation import DataTransformation
 from premium.component.model_trainer import ModelTrainer
+from premium.component.model_evaluation import ModelEvaluation
+from premium.component.model_pusher import ModelPusher
 from premium.config.configuration import Configuration
 import os,sys
 
@@ -53,6 +55,28 @@ class Pipeline:
         except Exception as e:
             raise PremiumException(e, sys) from e
 
+    def start_model_evaluation(self,data_ingestion_artifact: DataIngestionArtifact,
+        data_validation_artifact: DataValidationArtifact,
+        model_trainer_artifact : ModelTrainerArtifact):
+        try:
+            model_evaluation = ModelEvaluation(model_evaluation_config=self.config.get_model_evaluation_config(),
+                data_ingestion_artifact=data_ingestion_artifact,
+                data_validation_artifact=data_validation_artifact,
+                model_trainer_artifact=model_trainer_artifact
+            )
+            return model_evaluation.initiate_model_evaluation()
+        except Exception as e:
+            raise PremiumException(e, sys) from e
+
+    def start_model_pusher(self,model_evaluation_artifact: ModelEvaluationArtifact):
+        try:
+            model_pusher = ModelPusher(model_pusher_config=self.config.get_model_pusher_config(),
+             model_evaluation_artifact=model_evaluation_artifact)
+            return model_pusher.initiate_model_pusher()
+        except Exception as e:
+            raise PremiumException(e, sys) from e
+
+
     def run_pipeline(self):
         try:
             data_ingestion_artifact = self.start_data_ingestion()
@@ -60,6 +84,9 @@ class Pipeline:
             data_transformation_artifac= self.start_data_transformation(data_ingestion_artifact=data_ingestion_artifact,
                              data_validation_artifact=data_validation_artifact
                              )
-            model_trainer_artifact = self.start_model_training(data_transformation_artifac=data_transformation_artifac)           
+            model_trainer_artifact = self.start_model_training(data_transformation_artifac=data_transformation_artifac)    
+            model_evaluation_artifact = self.start_model_evaluation(data_ingestion_artifact=data_ingestion_artifact, 
+            data_validation_artifact=data_validation_artifact, model_trainer_artifact=model_trainer_artifact)   
+            model_pusher_artifact =  self.start_model_pusher(model_evaluation_artifact=model_evaluation_artifact)    
         except Exception as e:
             raise PremiumException(e, sys) from e
