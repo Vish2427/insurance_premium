@@ -6,4 +6,6 @@ sklearn
 PyYAML
 evidently
 dill
+matplotlib
+ipykernel
 -e .
