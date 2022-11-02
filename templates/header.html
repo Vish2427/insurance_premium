@@ -39,7 +39,7 @@ table-layout: fixed;
     word-wrap: break-word;
 }
 </style>
-<body style="background-color: #bcd4e6;">
+<body style="background-color: #f1f1f1;">
 
 
 
@@ -51,7 +51,7 @@ table-layout: fixed;
     
     -->
 
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003366;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
                 aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,11 +73,11 @@ table-layout: fixed;
                         <a class="nav-link {% if 'saved_models' in request.path %} active {% endif %}" href="/saved_models">View Trained Model</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if 'predict' in request.path %} active {% endif %}" href="/predict">Estimate Insurance Premium</a>
+                        <a class="nav-link {% if 'predict' in request.path %} active {% endif %}" href="/predict">Estimate Housing Price</a>
                     </li>
-                    <!--li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link {% if 'predict' in request.path %} active {% endif %}" href="/view_experiment_hist">Experiment History</a>
-                    </li>-->
+                    </li>
                 </ul>
             </div>
         </div>
@@ -130,35 +130,33 @@ table-layout: fixed;
 
 
 
-    <footer class="text-center text-white " style="background-color: #72a0c1;">
+    <footer class="text-center text-white " style="background-color: #d4d2d2;">
         <!-- Grid container -->
         <div class="container pt-4">
             <!-- Section: Social media -->
             <section class="mb-4">
-                <!-- Facebook  -->
+                <!-- Facebook -->
                 <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.facebook.com/ranbir.rathore.5" role="button"
                     data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
 
-                <!-- Twitter  -->
+                <!-- Twitter -->
                 <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://twitter.com/Vishal33140030" role="button"
                     data-mdb-ripple-color="dark"><i class="fab fa-twitter"></i></a>
 
-                <!-- Google  
+                <!-- Google 
                 <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
                     data-mdb-ripple-color="dark"><i class="fab fa-google"></i></a>-->
 
-                <!-- Instagram  -->
+                <!-- Instagram -->
                 <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.instagram.com/vish_0424/" role="button"
                     data-mdb-ripple-color="dark"><i class="fab fa-instagram"></i></a>
 
-                
+                <!-- Linkedin -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.linkedin.com/in/vishalchoudhary32/" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-linkedin"></i></a>
                 <!-- Github -->
                 <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://github.com/Vish2427" role="button"
                     data-mdb-ripple-color="dark"><i class="fab fa-github"></i></a>
-
-                <!-- Linkedin -->
-                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.linkedin.com/in/vishalchoudhary32" role="button"
-                    data-mdb-ripple-color="dark"><i class="fab fa-linkedin"></i></a>
             </section>
             <!-- Section: Social media -->
         </div>
@@ -167,7 +165,7 @@ table-layout: fixed;
         <!-- Copyright -->
         <div class="text-center text-light p-3" style="background-color: rgba(3, 36, 67, 0.504);">
             © 2022 Copyright:
-            <a class="text-light" href="https://github.com/Vish2427">Vishal ML Model</a>
+            <a class="text-light" href="https://github.com/Vish2427">Vishal ML Project</a>
         </div>
         <!-- Copyright -->
     </footer>

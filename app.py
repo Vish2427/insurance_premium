@@ -1,12 +1,8 @@
-import logging,sys
-from flask import Flask
+import logging
 from premium.logger import logging
 from premium.exception import  PremiumException
 
 from flask import Flask, request
-import sys
-
-import pip
 from premium.util.util import read_yaml_file, write_yaml_file
 from matplotlib.style import context
 import os, sys
@@ -75,12 +71,18 @@ def index():
     except Exception as e:
         return str(e)
 
-
+@app.route('/view_experiment_hist', methods=['GET', 'POST'])
+def view_experiment_history():
+    experiment_df = Pipeline.get_experiments_status()
+    context = {
+        "experiment": experiment_df.to_html(classes='table table-striped col-12')
+    }
+    return render_template('experiment_history.html', context=context)
 
 @app.route('/train', methods=['GET', 'POST'])
 def train():
     message = ""
-    pipeline = Pipeline(config=Configuration(current_time_stamp=get_current_time_stamp ))
+    pipeline = Pipeline(config=Configuration(current_time_stamp=get_current_time_stamp()))
     if not Pipeline.experiment.running_status:
         message = "Training started."
         pipeline.start()
