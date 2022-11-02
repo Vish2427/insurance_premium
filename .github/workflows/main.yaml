@@ -5,22 +5,22 @@ name: Deploy to heroku.
 on:
   push:
     branches: [main]
-
+env:
+      MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
 # Your workflows jobs.
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
+    
     steps:
-      
-      # Check-out your repository.
-      - name: Checkout
-        uses: actions/checkout@v2
-        
       #mongodb URL environment variable
       - name: Environment variable
         run : echo "$MONGO_DB_URL"
+
+      # Check-out your repository.
+      - name: Checkout
+        uses: actions/checkout@v2
+
       ### ⬇ IMPORTANT PART ⬇ ###
 
       - name: Build, Push and Release a Docker container to Heroku. # Your custom step name
