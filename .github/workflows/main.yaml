@@ -37,7 +37,7 @@ jobs:
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
         env:
           # mongodb url sent as env variable
-          MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
+          HD_MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
           # (Optional, default: "./")
           # Dockerfile directory.
           # For example, if you have a Dockerfile in the root of your project, leave it as follows:
