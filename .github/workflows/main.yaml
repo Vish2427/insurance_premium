@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
+      MONGODB_URL_KEY: ${{ secrets.MONGODB_URL_KEY }}
     steps:
       # Check-out your repository.
       - name: Checkout
