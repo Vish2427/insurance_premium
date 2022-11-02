@@ -4,8 +4,12 @@ from premium.entity.config_entity import DataIngestionConfig
 from premium.entity.artifact_entity import DataIngestionArtifact
 from sklearn.model_selection import StratifiedShuffleSplit
 from six.moves import urllib
+from premium.data_access.premium_data import PremiumData
+from premium.Constant.database import COLLECTION_NAME
+from premium.Constant import *
 import tarfile
 import pandas as pd
+from pandas import DataFrame
 import numpy as np
 import os,sys
 
@@ -18,60 +22,34 @@ class DataIngestion:
         except Exception as e:
             raise PremiumException(e, sys) from e
 
-    def download_premium_file(self):
+    
+    def export_data_into_feature_store(self) -> DataFrame:
+        """
+        Export mongo db collection record as data frame into raw data dir
+        """
         try:
-            download_url = self.data_ingestion_config.dataset_download_url
+            logging.info("Exporting data from mongodb to raw data dir")
+            premium_data = PremiumData()
+            dataframe = premium_data.export_collection_as_dataframe(collection_name=COLLECTION_NAME)
+            feature_store_file_path = self.data_ingestion_config.raw_data_dir           
 
-            tgz_download_dir = self.data_ingestion_config.tgz_download_dir
+            #creating folder
+            dir_path = os.path.dirname(feature_store_file_path)
+            os.makedirs(dir_path,exist_ok=True)
+            dataframe.to_csv(feature_store_file_path,index=False,header=True)
+            logging.info(" Exporting data completed")
+            return dataframe
+        except  Exception as e:
+            raise  PremiumException(e,sys)
 
-            if os.path.exists(tgz_download_dir):
-                os.remove(tgz_download_dir)
-
-            os.makedirs(tgz_download_dir, exist_ok=True)
-
-            premium_file_name = os.path.basename(download_url)
-
-            tgz_file_path = os.path.join(tgz_download_dir,premium_file_name)
-
-            logging.info(
-                f"Downloading file from :[{download_url}] into :[{tgz_file_path}]")
-
-            urllib.request.urlretrieve(download_url,tgz_file_path)
-
-            logging.info(
-                f"File :[{tgz_file_path}] has been downloaded sucessfully")
-
-            return tgz_file_path
-
-        except Exception as e:
-            raise PremiumException(e, sys) from e
-
-    def extract_tgz_file(self,tgz_file_path):
-        try:
-            raw_data_dir = self.data_ingestion_config.raw_data_dir
-
-            if os.path.exists(raw_data_dir):
-                os.remove(raw_data_dir)
-
-            os.makedirs(raw_data_dir,exist_ok=True)
-
-            logging.info(
-                (f"Extracting tgz file :[{tgz_file_path}] into dir: [{raw_data_dir}]"))
-
-            with tarfile.open(tgz_file_path) as premium_tgz_file_obj:
-                premium_tgz_file_obj.extractall(path=raw_data_dir)
-
-            logging.info(f"Extraction completed")
-        except Exception as e:
-            raise PremiumException(e, sys) from e
 
     def split_data_as_train_test(self) ->DataIngestionArtifact:
         try:
             raw_data_dir = self.data_ingestion_config.raw_data_dir
 
-            file_name = os.listdir(raw_data_dir)[0]
+            #file_name = os.listdir(raw_data_dir)[0]
 
-            premium_file_path = os.path.join(raw_data_dir,file_name)
+            premium_file_path = os.path.join(raw_data_dir)
 
             premium_data_frame = pd.read_csv(premium_file_path)
 
@@ -91,10 +69,10 @@ class DataIngestion:
                 strat_test_set = premium_data_frame.loc[test_index].drop(["expense_cat"],axis=1)
 
             train_file_path = os.path.join(self.data_ingestion_config.ingested_train_dir,
-                                            file_name)
+                                            FILE_NAME)
 
             test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir,
-                                        file_name)
+                                        FILE_NAME)
             if strat_train_set is not None:
                 os.makedirs(self.data_ingestion_config.ingested_train_dir,exist_ok=True)
                 logging.info(f"Exporting training datset to file: [{train_file_path}]")
@@ -118,8 +96,7 @@ class DataIngestion:
 
     def initiate_data_ingestion(self) -> DataIngestionArtifact:
         try:
-            tgz_file_path = self.download_premium_file()
-            self.extract_tgz_file(tgz_file_path=tgz_file_path)
+            dataframe = self.export_data_into_feature_store()
             return self.split_data_as_train_test()
         except Exception as e:
             raise PremiumException(e, sys) from e

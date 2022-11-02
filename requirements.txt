@@ -8,4 +8,5 @@ evidently
 dill
 matplotlib
 ipykernel
+pymongo[srv]==4.1.1
 -e .
