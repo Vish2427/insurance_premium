@@ -6,17 +6,14 @@ on:
   push:
     branches: [main]
 env:
-      MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
+    MONGO_DB_URL: mongodb+srv://mongodb:mongodb@practice.lgq8z4v.mongodb.net/?retryWrites=true&w=majority #${{ secrets.MONGODB_URL_KEY }}
 # Your workflows jobs.
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
-      #mongodb URL environment variable
-      - name: Environment variable
-        run : echo "$MONGO_DB_URL"
-
+      
       # Check-out your repository.
       - name: Checkout
         uses: actions/checkout@v2
