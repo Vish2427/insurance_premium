@@ -13,13 +13,14 @@ jobs:
     env:
       MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
     steps:
-      #mongodb URL environment variable
-      - name: Environment variable
-        run : echo "$MONGO_DB_URL"
+      
       # Check-out your repository.
       - name: Checkout
         uses: actions/checkout@v2
-
+        
+      #mongodb URL environment variable
+      - name: Environment variable
+        run : echo "$MONGO_DB_URL"
       ### ⬇ IMPORTANT PART ⬇ ###
 
       - name: Build, Push and Release a Docker container to Heroku. # Your custom step name
