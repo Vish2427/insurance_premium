@@ -1,5 +1,6 @@
 import pymongo
-from premium.Constant.database import DATABASE_NAME
+from premium.Constant.database import DATABASE_NAME,MONGODB_URL
+from premium.util.util import read_yaml_file
 import certifi
 import os
 ca = certifi.where()
@@ -11,8 +12,9 @@ class MongoDBClient:
         try:
 
             if MongoDBClient.client is None:
-                mongo_db_url = os.getenv(MONGODB_URL_KEY)
-                #mongo_db_url = ${{ secrets.MONGODB_URL_KEY }}
+                #mongo_db_url = os.getenv(MONGODB_URL_KEY)
+                mongo_db = read_yaml_file(file_path='/Config/mongo.yaml')
+                mongo_db_url = mongo_db[MONGODB_URL]
                 
                 MongoDBClient.client = pymongo.MongoClient(mongo_db_url, tlsCAFile=ca)
             self.client = MongoDBClient.client

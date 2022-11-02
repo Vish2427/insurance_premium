@@ -1,2 +1,3 @@
 DATABASE_NAME = "insurance"
 COLLECTION_NAME = "premium"
+MONGODB_URL = "URL"
