@@ -35,9 +35,7 @@ jobs:
 
           # Name of the heroku application to which the build is to be sent.
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-        env:
-          # mongodb url sent as env variable
-          HD_MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
+       
           # (Optional, default: "./")
           # Dockerfile directory.
           # For example, if you have a Dockerfile in the root of your project, leave it as follows:
@@ -56,3 +54,7 @@ jobs:
           # By default, this argument is set to "web".
           # For more information look at https://devcenter.heroku.com/articles/process-model
           process_type: web
+
+        env:
+          # mongodb url sent as env variable
+          HD_MONGO_DB_URL: ${{ secrets.MONGODB_URL_KEY }}
