@@ -22,7 +22,7 @@ In this project the goal is to give people an estimate of how much they need bas
 their individual health situation. After that, customers can work with any health
 insurance carrier and its plans and perks while keeping the projected cost from our
 study in mind. 
-The problem is to find the expense of the insurance premium which can assist a person in concentrating on the health side of an insurance policy rather han the ineffective part.
+The problem is to find the expense of the insurance premium which can assist a person in concentrating on the health side of an insurance policy rather than the ineffective part.
 
 ## Tech Stack Used
 
